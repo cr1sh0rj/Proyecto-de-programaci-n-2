@@ -136,6 +136,31 @@
   margin-top: 1.5rem;
 }
 
+.social-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 1rem;
+}
+
+.social-link {
+  font-size: 12px;
+  color: #a0b5c8;
+  text-decoration: none;
+  border: 1px solid #2a3f55;
+  border-radius: 999px;
+  padding: 6px 12px;
+  transition: all 0.2s;
+}
+
+.social-link:hover {
+  color: #c9a84c;
+  border-color: #c9a84c66;
+  background: #c9a84c14;
+}
+
 .main-app {
   background: var(--color-background-tertiary);
   min-height: 100vh;

@@ -72,6 +72,34 @@ export default function LoginScreen({ role, error, onSelectRole, onLogin }) {
 
           <div className="error-msg" id="login-error">{error}</div>
           <div className="hint-text">Inventario: inv123 — Facturación: fac123</div>
+
+          {/* Links actuales: Facebook https://www.facebook.com/ | Instagram https://www.instagram.com/ | LinkedIn https://www.linkedin.com/ */}
+          <div className="social-links" aria-label="Redes sociales de Kabod S.A.S">
+            <a
+              className="social-link"
+              href="https://www.facebook.com/kabodtienda/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Facebook
+            </a>
+            <a
+              className="social-link"
+              href="https://www.instagram.com/kabodtienda/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Instagram
+            </a>
+            <a
+              className="social-link"
+              href="https://www.linkedin.com/kabod"
+              target="_blank"
+              rel="noreferrer"
+            >
+              LinkedIn
+            </a>
+          </div>
         </div>
       </div>
     </div>
