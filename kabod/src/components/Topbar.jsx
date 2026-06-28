@@ -19,7 +19,7 @@ export default function Topbar({
           <span></span>
           <span></span>
         </button>
-        <div className="topbar-brand">KabodNexus</div>
+        <div className="topbar-brand">SymriseNexus</div>
       </div>
       <div className="topbar-user">
         <div className="user-badge" id="user-initials">{initials}</div>

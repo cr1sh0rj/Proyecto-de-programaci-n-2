@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import heroImage from '../assets/logo.png';
 
 export default function LoginScreen({ role, error, onSelectRole, onLogin }) {
   const [user, setUser] = useState('');
@@ -14,8 +15,9 @@ export default function LoginScreen({ role, error, onSelectRole, onLogin }) {
     <div id="login-screen" className="screen active">
       <div className="login-wrapper">
         <div className="login-card">
-          <div className="brand-name">KabodNexus</div>
-          <div className="brand-sub">Para Kabod S.A.S</div>
+          <img className="brand-image" src={heroImage} alt="Imagen de marca de Symrise" />
+          <div className="brand-name">SymriseNexus</div>
+          <div className="brand-sub">Para Symrise S.A.S</div>
           <div className="divider-line"></div>
           <div className="login-title">Sistema de Gestión Empresarial</div>
 
@@ -74,10 +76,12 @@ export default function LoginScreen({ role, error, onSelectRole, onLogin }) {
           <div className="hint-text">Inventario: inv123 — Facturación: fac123</div>
 
           {/* Links actuales: Facebook https://www.facebook.com/ | Instagram https://www.instagram.com/ | LinkedIn https://www.linkedin.com/ */}
-          <div className="social-links" aria-label="Redes sociales de Kabod S.A.S">
+          <div className="social-links" aria-label="Redes sociales de 
+          
+          Symrise S.A.S">
             <a
               className="social-link"
-              href="https://www.facebook.com/kabodtienda/"
+              href="https://www.facebook.com/symrisetienda/"
               target="_blank"
               rel="noreferrer"
             >
@@ -85,7 +89,7 @@ export default function LoginScreen({ role, error, onSelectRole, onLogin }) {
             </a>
             <a
               className="social-link"
-              href="https://www.instagram.com/kabodtienda/"
+              href="https://www.instagram.com/symrisetienda/"
               target="_blank"
               rel="noreferrer"
             >
@@ -93,7 +97,7 @@ export default function LoginScreen({ role, error, onSelectRole, onLogin }) {
             </a>
             <a
               className="social-link"
-              href="https://www.linkedin.com/kabod"
+              href="https://www.linkedin.com/company/symrise"
               target="_blank"
               rel="noreferrer"
             >
