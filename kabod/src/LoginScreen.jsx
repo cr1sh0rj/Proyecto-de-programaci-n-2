@@ -17,7 +17,7 @@ export default function LoginScreen({ role, error, onSelectRole, onLogin }) {
           <div className="brand-name">ColPartFlow</div>
           <div className="brand-sub">Para Colfiters S.A.S</div>
           <div className="divider-line"></div>
-          <div className="login-title">Sistema de Gestión Empresarial</div>
+          <div className="login-title">Sistema de Gestión de Perfumeria</div>
 
           <div className="role-tabs">
             <button
