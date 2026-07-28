@@ -14,8 +14,8 @@ export default function LoginScreen({ role, error, onSelectRole, onLogin }) {
     <div id="login-screen" className="screen active">
       <div className="login-wrapper">
         <div className="login-card">
-          <div className="brand-name">ColPartFlow</div>
-          <div className="brand-sub">Para Colfiters S.A.S</div>
+          <div className="brand-name">SymriseNexus</div>
+          <div className="brand-sub">Para Symrise S.A.S</div>
           <div className="divider-line"></div>
           <div className="login-title">Sistema de Gestión de Perfumeria</div>
 
