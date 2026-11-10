@@ -1,0 +1,13 @@
+{
+    "productos":[
+        {
+            "codigo": "R-001",
+            "nombre": "Camiseta Naranja con Bordado Floral",
+            "categoria": "Unisex",
+            "stock": 40,
+            "unidad": "und",
+            "costo": 150000,
+            "atockMinimo": 10
+        }
+    ]
+}
