@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import LoginScreen from './components/LoginScreen';
+import RegisterScreen from './components/RegisterScreen';
 import MainLayout from './components/MainLayout';
 import './styles/app.css';
 import './styles/responsive.css';
@@ -9,6 +10,7 @@ import {
   formatDateShort,
   parseLocalDate,
 } from './utils/formatters';
+import { addRegisteredUser, findRegisteredUser } from './utils/userStorage';
 
 const LOGIN_PASSWORDS = {
   inventario: 'inv123',
@@ -23,6 +25,7 @@ export default function App() {
   const [role, setRole] = useState('inventario');
   const [userName, setUserName] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [registrationMessage, setRegistrationMessage] = useState('');
   const [activePage, setActivePage] = useState('dashboard-inv');
 
   const [products, setProducts] = useState([]);
@@ -40,21 +43,65 @@ export default function App() {
     setLoginError('');
   };
 
-  const handleLogin = ({ user, pass }) => {
+  const handleOpenRegister = () => {
+    setLoginError('');
+    setRegistrationMessage('');
+    setScreen('register');
+  };
+
+  const handleRegister = async (newUser) => {
+    const result = await addRegisteredUser(newUser);
+    if (result.ok) {
+      setRole(newUser.role);
+      setRegistrationMessage('Cuenta creada correctamente. Ya puedes iniciar sesión.');
+      setLoginError('');
+      setScreen('login');
+    }
+    return result;
+  };
+
+  const handleLogin = async ({ user, pass }) => {
     if (!pass) {
       setLoginError('Por favor ingrese su clave de acceso.');
       return;
     }
-    if (pass !== LOGIN_PASSWORDS[role]) {
-      setLoginError('Clave incorrecta. Verifique e intente de nuevo.');
+
+    const normalizedUser = user?.trim().toLocaleLowerCase();
+    let registeredUser;
+    try {
+      registeredUser = normalizedUser ? await findRegisteredUser(normalizedUser) : null;
+    } catch {
+      setLoginError('No se pudieron leer las cuentas guardadas en este navegador.');
       return;
     }
 
+    if (registeredUser) {
+      let passwordMatches;
+      try {
+        passwordMatches = await registeredUser.verifyPassword(pass);
+      } catch {
+        setLoginError('No se pudo verificar la cuenta guardada.');
+        return;
+      }
+      if (!passwordMatches) {
+        setLoginError('Usuario o contraseña incorrectos.');
+        return;
+      }
+      setRole(registeredUser.role);
+      setUserName(registeredUser.fullName);
+      setActivePage(registeredUser.role === 'inventario' ? 'dashboard-inv' : 'dashboard-fac');
+    } else if (pass !== LOGIN_PASSWORDS[role]) {
+      setLoginError('Clave incorrecta. Verifique e intente de nuevo.');
+      return;
+    } else {
+      const name = user?.trim() || getDefaultUser(role);
+      setUserName(name);
+      setActivePage(role === 'inventario' ? 'dashboard-inv' : 'dashboard-fac');
+    }
+
     setLoginError('');
+    setRegistrationMessage('');
     setScreen('main');
-    const name = user?.trim() || getDefaultUser(role);
-    setUserName(name);
-    setActivePage(role === 'inventario' ? 'dashboard-inv' : 'dashboard-fac');
   };
 
   const handleLogout = () => {
@@ -62,6 +109,7 @@ export default function App() {
     setRole('inventario');
     setUserName('');
     setLoginError('');
+    setRegistrationMessage('');
     setActivePage('dashboard-inv');
   };
 
@@ -150,8 +198,15 @@ export default function App() {
         <LoginScreen
           role={role}
           error={loginError}
+          success={registrationMessage}
           onSelectRole={handleSelectRole}
           onLogin={handleLogin}
+          onOpenRegister={handleOpenRegister}
+        />
+      ) : screen === 'register' ? (
+        <RegisterScreen
+          onRegister={handleRegister}
+          onBack={() => setScreen('login')}
         />
       ) : (
         <MainLayout
