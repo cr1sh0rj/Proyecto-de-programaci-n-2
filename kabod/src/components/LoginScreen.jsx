@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-export default function LoginScreen({ role, error, onSelectRole, onLogin }) {
+export default function LoginScreen({ role, error, success, onSelectRole, onLogin, onOpenRegister }) {
   const [user, setUser] = useState('');
   const [pass, setPass] = useState('');
 
-  useEffect(() => {
-    setPass('');
-  }, [role]);
-
   const handleSubmit = () => onLogin({ user, pass });
+  const handleSelectRole = (nextRole) => {
+    setPass('');
+    onSelectRole(nextRole);
+  };
 
   return (
     <div id="login-screen" className="screen active">
@@ -24,7 +24,7 @@ export default function LoginScreen({ role, error, onSelectRole, onLogin }) {
               className={`role-tab ${role === 'inventario' ? 'selected' : ''}`}
               id="tab-inv"
               type="button"
-              onClick={() => onSelectRole('inventario')}
+              onClick={() => handleSelectRole('inventario')}
             >
               <span className="role-icon">📦</span>
               <span>Inventario</span>
@@ -33,7 +33,7 @@ export default function LoginScreen({ role, error, onSelectRole, onLogin }) {
               className={`role-tab ${role === 'facturacion' ? 'selected' : ''}`}
               id="tab-fac"
               type="button"
-              onClick={() => onSelectRole('facturacion')}
+              onClick={() => handleSelectRole('facturacion')}
             >
               <span className="role-icon">🧾</span>
               <span>Facturación</span>
@@ -71,6 +71,8 @@ export default function LoginScreen({ role, error, onSelectRole, onLogin }) {
           </button>
 
           <div className="error-msg" id="login-error">{error}</div>
+          {success && <div className="success-msg" role="status">{success}</div>}
+          <button className="btn-text" type="button" onClick={onOpenRegister}>Crear una cuenta</button>
           <div className="hint-text">Inventario: inv123 — Facturación: fac123</div>
 
           {/* Links actuales: Facebook https://www.facebook.com/ | Instagram https://www.instagram.com/ | LinkedIn https://www.linkedin.com/ */}
