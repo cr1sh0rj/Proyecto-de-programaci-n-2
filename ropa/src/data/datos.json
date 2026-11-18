@@ -8,6 +8,87 @@
             "unidad": "und",
             "costo": 150000,
             "atockMinimo": 10
+        },
+     {
+            "codigo": "R-002",
+            "nombre": "Camisa Blanca Manga Larga",
+            "categoria": "Masculino",
+            "stock": 28,
+            "unidad": "und",
+            "costo": 95000,
+            "minStock": 8
+        },
+        {
+            "codigo": "R-003",
+            "nombre": "Vestido Largo Rojo",
+            "categoria": "Femenino",
+            "stock": 15,
+            "unidad": "und",
+            "costo": 180000,
+            "minStock": 5
+        },
+        {
+            "codigo": "R-004",
+            "nombre": "Jean Clásico Azul",
+            "categoria": "Masculino",
+            "stock": 35,
+            "unidad": "und",
+            "costo": 120000,
+            "minStock": 10
+        },
+        {
+            "codigo": "R-005",
+            "nombre": "Blusa Verde de Lino",
+            "categoria": "Femenino",
+            "stock": 7,
+            "unidad": "und",
+            "costo": 85000,
+            "minStock": 10
+        },
+        {
+            "codigo": "R-006",
+            "nombre": "Sudadera Gris con Capota",
+            "categoria": "Unisex",
+            "stock": 22,
+            "unidad": "und",
+            "costo": 110000,
+            "minStock": 8
+        },
+        {
+            "codigo": "R-007",
+            "nombre": "Falda Negra Tableada",
+            "categoria": "Femenino",
+            "stock": 0,
+            "unidad": "und",
+            "costo": 78000,
+            "minStock": 6
+        },
+        {
+            "codigo": "R-008",
+            "nombre": "Chaqueta Denim Oversize",
+            "categoria": "Unisex",
+            "stock": 12,
+            "unidad": "und",
+            "costo": 220000,
+            "minStock": 4
+        },
+        {
+            "codigo": "R-009",
+            "nombre": "Buzo Deportivo Negro",
+            "categoria": "Masculino",
+            "stock": 18,
+            "unidad": "und",
+            "costo": 90000,
+            "minStock": 5
+        },
+        {
+            "codigo": "R-010",
+            "nombre": "Pantalón Beige Cargo",
+            "categoria": "Unisex",
+            "stock": 24,
+            "unidad": "und",
+            "costo": 130000,
+            "minStock": 7
         }
     ]
 }
