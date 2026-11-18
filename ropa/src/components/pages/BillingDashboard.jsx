@@ -1,9 +1,10 @@
 import { formatCurrency } from '../../utils/formatters';
 
 export default function BillingDashboard({ invoices, onNewInvoice }) {
-  const totalSales = invoices.reduce((sum, invoice) => sum + invoice.total, 0);
-  const issuedCount = invoices.length;
-  const pendingTotal = invoices
+  const activeInvoices = invoices.filter((invoice) => invoice.status !== 'Cancelada');
+  const totalSales = activeInvoices.reduce((sum, invoice) => sum + invoice.total, 0);
+  const issuedCount = activeInvoices.length;
+  const pendingTotal = activeInvoices
     .filter((invoice) => invoice.status === 'Pendiente')
     .reduce((sum, invoice) => sum + invoice.total, 0);
   const cancelled = invoices.filter((invoice) => invoice.status === 'Cancelada').length;

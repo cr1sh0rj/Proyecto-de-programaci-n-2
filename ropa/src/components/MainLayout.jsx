@@ -29,6 +29,10 @@ export default function MainLayout({
   onDeleteInvoice,
   onEmitInvoice,
   formatCurrency,
+  suppliers,
+  onAddSupplier,
+  onEditSupplier,
+  onDeleteSupplier,
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -117,7 +121,12 @@ export default function MainLayout({
             </PageContainer>
 
             <PageContainer id="proveedores" active={activePage === 'proveedores'}>
-              <SuppliersPage />
+              <SuppliersPage
+                suppliers={suppliers}
+                onAddSupplier={onAddSupplier}
+                onEditSupplier={onEditSupplier}
+                onDeleteSupplier={onDeleteSupplier}
+              />
             </PageContainer>
 
             <PageContainer id="alertas" active={activePage === 'alertas'}>

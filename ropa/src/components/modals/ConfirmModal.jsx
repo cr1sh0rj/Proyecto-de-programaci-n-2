@@ -4,6 +4,7 @@ export default function ConfirmModal({
   text,
   detail,
   confirmLabel,
+  warning = 'Esta acción no se puede deshacer.',
   onClose,
   onConfirm,
 }) {
@@ -21,9 +22,11 @@ export default function ConfirmModal({
         <div className="modal-body">
           <div className="delete-confirm-text">{text}</div>
           <div className="delete-confirm-detail">{detail || '—'}</div>
-          <div style={{ fontSize: '12px', color: '#A32D2D', marginTop: '12px' }}>
-            Esta acción no se puede deshacer.
-          </div>
+          {warning && (
+            <div style={{ fontSize: '12px', color: '#A32D2D', marginTop: '12px' }}>
+              {warning}
+            </div>
+          )}
         </div>
         <div className="modal-footer">
           <button className="btn-secondary" type="button" onClick={onClose}>

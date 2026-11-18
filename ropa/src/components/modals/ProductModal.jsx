@@ -10,16 +10,30 @@ const INITIAL_STATE = {
   minStock: '',
 };
 
-export default function ProductModal({ open, onClose, onSave }) {
+const buildForm = (product) => {
+  if (!product) return INITIAL_STATE;
+  return {
+    code: product.code,
+    category: product.category,
+    name: product.name,
+    stock: String(product.stock),
+    unit: product.unit === 'caja' ? 'caja (Aprox. 25 a 40 unidades)' : 'und (unidades)',
+    cost: String(product.cost),
+    minStock: String(product.minStock),
+  };
+};
+
+export default function ProductModal({ open, onClose, onSave, product, existingCodes = [] }) {
   const [form, setForm] = useState(INITIAL_STATE);
   const [error, setError] = useState('');
+  const isEditing = Boolean(product);
 
   useEffect(() => {
     if (open) {
-      setForm(INITIAL_STATE);
+      setForm(buildForm(product));
       setError('');
     }
-  }, [open]);
+  }, [open, product]);
 
   if (!open) return null;
 
@@ -30,6 +44,10 @@ export default function ProductModal({ open, onClose, onSave }) {
   const handleSubmit = () => {
     if (!form.code || !form.name || !form.category || form.stock === '' || form.cost === '') {
       setError('Complete todos los campos obligatorios.');
+      return;
+    }
+    if (!isEditing && existingCodes.includes(form.code.trim())) {
+      setError('Ya existe un producto con ese código.');
       return;
     }
     setError('');
@@ -50,7 +68,9 @@ export default function ProductModal({ open, onClose, onSave }) {
     <div className="modal-overlay open">
       <div className="modal-box">
         <div className="modal-head">
-          <div className="modal-title">Registrar nuevo producto</div>
+          <div className="modal-title">
+            {isEditing ? 'Editar producto' : 'Registrar nuevo producto'}
+          </div>
           <button className="modal-close" type="button" onClick={onClose}>✕</button>
         </div>
         <div className="modal-body">
@@ -63,6 +83,7 @@ export default function ProductModal({ open, onClose, onSave }) {
                 type="text"
                 placeholder="Ej: M-001"
                 value={form.code}
+                disabled={isEditing}
                 onChange={handleChange('code')}
               />
             </div>
@@ -96,7 +117,9 @@ export default function ProductModal({ open, onClose, onSave }) {
           </div>
           <div className="form-row">
             <div className="form-field">
-              <label className="field-label" htmlFor="np-stock">Stock inicial</label>
+              <label className="field-label" htmlFor="np-stock">
+                {isEditing ? 'Stock' : 'Stock inicial'}
+              </label>
               <input
                 className="field-input"
                 id="np-stock"
@@ -155,7 +178,7 @@ export default function ProductModal({ open, onClose, onSave }) {
             Cancelar
           </button>
           <button className="btn-primary" type="button" onClick={handleSubmit}>
-            Guardar producto
+            {isEditing ? 'Guardar cambios' : 'Guardar producto'}
           </button>
         </div>
       </div>

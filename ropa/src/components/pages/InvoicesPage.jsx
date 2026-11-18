@@ -41,6 +41,9 @@ export default function InvoicesPage({ invoices, onNewInvoice, onDeleteInvoice }
         <button className="btn-secondary" type="button" onClick={() => setStatus('')}>
           Todas
         </button>
+        <button className="btn-secondary" type="button" onClick={() => setStatus('Cancelada')}>
+          Canceladas
+        </button>
         <button className="btn-primary" type="button" onClick={onNewInvoice}>
           + Nueva
         </button>
@@ -66,8 +69,13 @@ export default function InvoicesPage({ invoices, onNewInvoice, onDeleteInvoice }
               </tr>
             ) : (
               filtered.map((invoice) => {
-                const badgeCls = invoice.status === 'Pagada' ? 'badge-paid' : 'badge-pending';
-                return (
+              const badgeCls =
+                invoice.status === 'Pagada'
+                  ? 'badge-paid'
+                  : invoice.status === 'Cancelada'
+                    ? 'badge-cancel'
+                    : 'badge-pending';   
+                   return (
                   <tr key={invoice.id} data-estado={invoice.status}>
                     <td>{invoice.number}</td>
                     <td>{invoice.client}</td>
@@ -76,14 +84,16 @@ export default function InvoicesPage({ invoices, onNewInvoice, onDeleteInvoice }
                     <td>{formatCurrency(invoice.total)}</td>
                     <td><span className={`badge ${badgeCls}`}>{invoice.status}</span></td>
                     <td>
+                    {invoice.status !== 'Cancelada' && (
                       <button
                         className="btn-delete-row"
                         type="button"
                         onClick={() => setDeleteTarget(invoice)}
                       >
-                        Borrar
+                        Anular
                       </button>
-                    </td>
+                    )}
+                  </td>
                   </tr>
                 );
               })
@@ -94,14 +104,15 @@ export default function InvoicesPage({ invoices, onNewInvoice, onDeleteInvoice }
 
       <ConfirmModal
         open={Boolean(deleteTarget)}
-        title="Confirmar eliminación"
-        text="¿Deseas eliminar esta factura?"
+        title="Confirmar anulación"
+        text="¿Deseas anular esta factura?"
         detail={
           deleteTarget
             ? `${deleteTarget.number} — ${deleteTarget.client} — ${formatCurrency(deleteTarget.total)}`
             : '—'
         }
-        confirmLabel="Sí, eliminar"
+        confirmLabel="Sí, anular"
+        warning="La factura quedará registrada como Cancelada."
         onClose={() => setDeleteTarget(null)}
         onConfirm={() => {
           if (deleteTarget) onDeleteInvoice(deleteTarget.id);

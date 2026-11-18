@@ -27,7 +27,7 @@ export default function App() {
   const [loginError, setLoginError] = useState('');
   const [registrationMessage, setRegistrationMessage] = useState('');
   const [activePage, setActivePage] = useState('dashboard-inv');
-
+  const [suppliers, setSuppliers] = useState([]);
   const [products, setProducts] = useState([]);
   const [movements, setMovements] = useState([]);
   const [invoices, setInvoices] = useState([]);
@@ -116,11 +116,31 @@ export default function App() {
   const handleAddProduct = (product) => {
     setProducts((prev) => [...prev, product]);
   };
-
+  const handleEditProduct = (code, updated) => {
+  setProducts((prev) =>
+    prev.map((product) =>
+      product.code === code ? { ...product, ...updated, code } : product,
+   ),
+   );
+  };
   const handleDeleteProduct = (code) => {
     setProducts((prev) => prev.filter((product) => product.code !== code));
   };
+  const handleAddSupplier = (supplier) => {
+  setSuppliers((prev) => [...prev, supplier]);
+  };
 
+  const handleEditSupplier = (nit, updated) => {
+    setSuppliers((prev) =>
+      prev.map((supplier) =>
+        supplier.nit === nit ? { ...supplier, ...updated, nit } : supplier,
+      ),
+    );
+  };
+
+  const handleDeleteSupplier = (nit) => {
+    setSuppliers((prev) => prev.filter((supplier) => supplier.nit !== nit));
+  };
   const handleAddMovement = (movement) => {
     setMovements((prev) => [movement, ...prev]);
   };
@@ -130,9 +150,12 @@ export default function App() {
   };
 
   const handleDeleteInvoice = (id) => {
-    setInvoices((prev) => prev.filter((invoice) => invoice.id !== id));
+    setInvoices((prev) =>
+       prev.filter((invoice) => 
+        invoice.id === id ? { ...invoice, status: 'Cancelada' } : invoice,
+      ),
+    );
   };
-
   const handleEmitInvoice = ({ client, date, payment, lines }) => {
     const issuedAt = parseLocalDate(date);
     const dueDate = issuedAt ? new Date(issuedAt) : null;
@@ -219,7 +242,12 @@ export default function App() {
           movements={movements}
           invoices={invoices}
           onAddProduct={handleAddProduct}
+          onEditProduct={handleEditProduct}
           onDeleteProduct={handleDeleteProduct}
+          suppliers={suppliers}
+          onAddSupplier={handleAddSupplier}
+          onEditSupplier={handleEditSupplier}
+          onDeleteSupplier={handleDeleteSupplier}
           onAddMovement={handleAddMovement}
           onDeleteMovement={handleDeleteMovement}
           onDeleteInvoice={handleDeleteInvoice}

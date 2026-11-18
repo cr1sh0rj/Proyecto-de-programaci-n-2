@@ -8,6 +8,8 @@ export default function ProductsPage({ products, onAddProduct, onDeleteProduct, 
   const [showModal, setShowModal] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [editTarget, setEditTarget] = useState(null);
+  const [successMsg, setSuccessMsg] = useState('');
 
   const filtered = useMemo(() => {
     return products.filter((product) => {
@@ -17,12 +19,34 @@ export default function ProductsPage({ products, onAddProduct, onDeleteProduct, 
     });
   }, [products, search, category]);
 
-  const handleSave = (product) => {
-    onAddProduct(product);
-    setShowModal(false);
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 3000);
-  };
+  const handleSave = (data) => {
+  if (editTarget) {
+    onEditProduct(editTarget.code, data);
+    setSuccessMsg('Producto actualizado correctamente.');
+  } else {
+    onAddProduct(data);
+    setSuccessMsg('Producto registrado correctamente.');
+  }
+  setShowModal(false);
+  setEditTarget(null);
+  setShowSuccess(true);
+  setTimeout(() => setShowSuccess(false), 3000);
+};
+
+const handleOpenNew = () => {
+  setEditTarget(null);
+  setShowModal(true);
+};
+
+const handleOpenEdit = (product) => {
+  setEditTarget(product);
+  setShowModal(true);
+};
+
+const handleCloseModal = () => {
+  setShowModal(false);
+  setEditTarget(null);
+};
 
   const handleConfirmDelete = () => {
     if (deleteTarget) {
@@ -39,7 +63,7 @@ export default function ProductsPage({ products, onAddProduct, onDeleteProduct, 
       </div>
 
       <div className="success-banner" id="prod-success" style={{ display: showSuccess ? 'block' : 'none' }}>
-        Producto registrado correctamente.
+        {successMsg}
       </div>
 
       <div className="actions-row">
@@ -63,7 +87,7 @@ export default function ProductsPage({ products, onAddProduct, onDeleteProduct, 
           <option>Femenino</option>
           <option>Unisex</option>
         </select>
-        <button className="btn-primary" type="button" onClick={() => setShowModal(true)}>
+        <button className="btn-primary" type="button" onClick={handleOpenNew}>
           + Nuevo producto
         </button>
       </div>
@@ -78,7 +102,7 @@ export default function ProductsPage({ products, onAddProduct, onDeleteProduct, 
               <th>Stock</th>
               <th>Costo unit.</th>
               <th>Estado</th>
-              <th style={{ width: '80px' }}>Acción</th>
+              <th style={{ width: '150px' }}>Acción</th>
             </tr>
           </thead>
           <tbody id="tabla-productos">
@@ -104,14 +128,22 @@ export default function ProductsPage({ products, onAddProduct, onDeleteProduct, 
                     <td>{formatCurrency(product.cost)}</td>
                     <td><span className={`badge ${badgeClass}`}>{badgeText}</span></td>
                     <td>
-                      <button
-                        className="btn-delete-row"
-                        type="button"
-                        onClick={() => setDeleteTarget(product)}
-                      >
-                        Borrar
-                      </button>
-                    </td>
+                    <button
+                      className="btn-secondary"
+                      type="button"
+                      style={{ padding: '4px 10px', fontSize: '12px', marginRight: '6px' }}
+                      onClick={() => handleOpenEdit(product)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="btn-delete-row"
+                      type="button"
+                      onClick={() => setDeleteTarget(product)}
+                    >
+                      Borrar
+                    </button>
+                  </td>
                   </tr>
                 );
               })
@@ -122,7 +154,9 @@ export default function ProductsPage({ products, onAddProduct, onDeleteProduct, 
 
       <ProductModal
         open={showModal}
-        onClose={() => setShowModal(false)}
+        product={editTarget}
+        existingCodes={products.map((p) => p.code)}
+        onClose={handleCloseModal}
         onSave={handleSave}
       />
 
