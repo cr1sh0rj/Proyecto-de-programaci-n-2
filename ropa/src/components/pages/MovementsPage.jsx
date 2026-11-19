@@ -3,7 +3,7 @@ import MovementModal from '../modals/MovementModal';
 import ConfirmModal from '../modals/ConfirmModal';
 import { formatDate } from '../../utils/formatters';
 
-export default function MovementsPage({ movements, onAddMovement, onDeleteMovement }) {
+export default function MovementsPage({ movements,products, onAddMovement, onDeleteMovement }) {
   const [search, setSearch] = useState('');
   const [filterType, setFilterType] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -17,16 +17,21 @@ export default function MovementsPage({ movements, onAddMovement, onDeleteMoveme
     });
   }, [movements, search, filterType]);
 
-  const handleSave = (movement) => {
+    const handleSave = (movement) => {
+    const product = products.find((item) => item.code === movement.productCode);
+    if (!product) return;
+    const qty = parseInt(movement.quantity, 10);
+    const sign = movement.type === 'Entrada' ? '+' : '-';
+
     onAddMovement({
       id: `${Date.now()}-${Math.random()}`,
       date: formatDate(movement.date),
       type: movement.type,
-      product: movement.product,
-      category: movement.category,
-      quantity: movement.type === 'Entrada'
-        ? `+${movement.quantity} und`
-        : `-${movement.quantity} und`,
+      product: product.name,
+      productCode: product.code,
+      category: product.category,
+      qty,
+      quantity: `${sign}${qty} ${product.unit}`,
       responsible: movement.responsible,
     });
     setShowModal(false);
@@ -112,6 +117,7 @@ export default function MovementsPage({ movements, onAddMovement, onDeleteMoveme
         open={showModal}
         onClose={() => setShowModal(false)}
         onSave={handleSave}
+        products={products}
       />
 
       <ConfirmModal

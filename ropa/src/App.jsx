@@ -4,12 +4,9 @@ import RegisterScreen from './components/RegisterScreen';
 import MainLayout from './components/MainLayout';
 import './styles/app.css';
 import './styles/responsive.css';
-import {
-  formatCurrency,
-  formatDate,
-  formatDateShort,
-  parseLocalDate,
-} from './utils/formatters';
+import datosIniciales from './data/datos.json';
+import usePersistentState from './utils/usePersistentState';
+import {formatCurrency,formatDate,formatDateShort,parseLocalDate,} from './utils/formatters';
 import { addRegisteredUser, findRegisteredUser } from './utils/userStorage';
 
 const LOGIN_PASSWORDS = {
@@ -20,6 +17,15 @@ const LOGIN_PASSWORDS = {
 const getDefaultUser = (role) =>
   role === 'inventario' ? 'Jefe de Inventario' : 'Facturador';
 
+const INITIAL_PRODUCTS = datosIniciales.productos.map((p) => ({
+  code: p.codigo,
+  name: p.nombre,
+  category: p.categoria,
+  stock: p.stock,
+  unit: p.unidad,
+  cost: p.costo,
+  minStock: p.minStock ?? 0,
+}));
 export default function App() {
   const [screen, setScreen] = useState('login');
   const [role, setRole] = useState('inventario');
@@ -27,11 +33,12 @@ export default function App() {
   const [loginError, setLoginError] = useState('');
   const [registrationMessage, setRegistrationMessage] = useState('');
   const [activePage, setActivePage] = useState('dashboard-inv');
-  const [suppliers, setSuppliers] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [movements, setMovements] = useState([]);
-  const [invoices, setInvoices] = useState([]);
-  const [invoiceCounter, setInvoiceCounter] = useState(1);
+  const [products, setProducts] = usePersistentState('ropa.products.v1', INITIAL_PRODUCTS);
+  const [movements, setMovements] = usePersistentState('ropa.movements.v1', []);
+  const [invoices, setInvoices] = usePersistentState('ropa.invoices.v1', []);
+  const [invoiceCounter, setInvoiceCounter] = usePersistentState('ropa.invoiceCounter.v1', 1);
+  const [suppliers, setSuppliers] = usePersistentState('ropa.suppliers.v1', []);
+  const RESTOCK_AMOUNT = 50;
 
   const productMap = useMemo(
     () => new Map(products.map((product) => [product.code, product])),
@@ -141,12 +148,60 @@ export default function App() {
   const handleDeleteSupplier = (nit) => {
     setSuppliers((prev) => prev.filter((supplier) => supplier.nit !== nit));
   };
-  const handleAddMovement = (movement) => {
+    const handleAddMovement = (movement) => {
+    setProducts((prev) =>
+      prev.map((product) => {
+        if (product.code !== movement.productCode) return product;
+        const nextStock =
+          movement.type === 'Entrada'
+            ? product.stock + movement.qty
+            : Math.max(0, product.stock - movement.qty);
+        return { ...product, stock: nextStock };
+      }),
+    );
     setMovements((prev) => [movement, ...prev]);
   };
 
   const handleDeleteMovement = (id) => {
+    const target = movements.find((movement) => movement.id === id);
+    if (target?.productCode) {
+      setProducts((prev) =>
+        prev.map((product) => {
+          if (product.code !== target.productCode) return product;
+          const nextStock =
+            target.type === 'Entrada'
+              ? Math.max(0, product.stock - target.qty)
+              : product.stock + target.qty;
+          return { ...product, stock: nextStock };
+        }),
+      );
+    }
     setMovements((prev) => prev.filter((movement) => movement.id !== id));
+  };
+    const handleRestock = (codes) => {
+    const today = formatDate(new Date());
+    const entries = products
+      .filter((product) => codes.includes(product.code))
+      .map((product) => ({
+        id: `${Date.now()}-${Math.random()}`,
+        date: today,
+        type: 'Entrada',
+        product: product.name,
+        productCode: product.code,
+        category: product.category,
+        qty: RESTOCK_AMOUNT,
+        quantity: `+${RESTOCK_AMOUNT} ${product.unit}`,
+        responsible: 'Orden de reposición',
+      }));
+
+    setProducts((prev) =>
+      prev.map((product) =>
+        codes.includes(product.code)
+          ? { ...product, stock: product.stock + RESTOCK_AMOUNT }
+          : product,
+      ),
+    );
+    setMovements((prev) => [...entries, ...prev]);
   };
 
   const handleDeleteInvoice = (id) => {
@@ -249,6 +304,7 @@ export default function App() {
           onEditSupplier={handleEditSupplier}
           onDeleteSupplier={handleDeleteSupplier}
           onAddMovement={handleAddMovement}
+          onRestock={handleRestock}
           onDeleteMovement={handleDeleteMovement}
           onDeleteInvoice={handleDeleteInvoice}
           onEmitInvoice={handleEmitInvoice}

@@ -1,7 +1,20 @@
-export default function AlertsPage({ products }) {
+import { useState } from 'react';
+
+const RESTOCK_AMOUNT = 50;
+
+export default function AlertsPage({ products, onRestock }) {
+  const [message, setMessage] = useState('');
+
   const alerts = products.filter(
     (product) => product.stock === 0 || (product.minStock > 0 && product.stock <= product.minStock),
   );
+
+  const handleGenerateOrder = () => {
+    if (alerts.length === 0) return;
+    onRestock(alerts.map((product) => product.code));
+    setMessage(`Orden generada: +${RESTOCK_AMOUNT} unidades a ${alerts.length} producto(s).`);
+    setTimeout(() => setMessage(''), 4000);
+  };
 
   return (
     <>
@@ -10,10 +23,21 @@ export default function AlertsPage({ products }) {
         <div className="page-sub">Productos que requieren reabastecimiento</div>
       </div>
 
+      <div className="success-banner" style={{ display: message ? 'block' : 'none' }}>
+        {message}
+      </div>
+
       <div className="table-card">
         <div className="table-header">
           <div className="table-title">Stock crítico y agotado</div>
-          <button className="btn-primary" type="button">Generar orden</button>
+          <button
+            className="btn-primary"
+            type="button"
+            disabled={alerts.length === 0}
+            onClick={handleGenerateOrder}
+          >
+            Generar orden
+          </button>
         </div>
         <table>
           <thead>

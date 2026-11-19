@@ -7,7 +7,7 @@
             "stock": 40,
             "unidad": "und",
             "costo": 150000,
-            "atockMinimo": 10
+            "minstockMinimo": 10
         },
      {
             "codigo": "R-002",
