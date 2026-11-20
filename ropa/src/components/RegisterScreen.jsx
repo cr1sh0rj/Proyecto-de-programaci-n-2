@@ -37,8 +37,8 @@ export default function RegisterScreen({ onRegister, onBack }) {
     <div className="screen active">
       <div className="login-wrapper">
         <div className="login-card register-card">
-          <div className="brand-name">ColPartFlow</div>
-          <div className="brand-sub">Para Colfiters S.A.S</div>
+          <div className="brand-name">KabodNexus</div>
+          <div className="brand-sub">Para Kabod S.A.S</div>
           <div className="divider-line"></div>
           <div className="login-title">Crear cuenta</div>
 

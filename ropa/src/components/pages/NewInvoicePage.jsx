@@ -107,6 +107,14 @@ export default function NewInvoicePage({ products, onEmitInvoice, formatCurrency
 
     onEmitInvoice({
       client,
+      nit,
+      date,
+      payment,
+      lines,
+    });
+    
+    onEmitInvoice({
+      client,
       date,
       payment,
       lines,
@@ -168,9 +176,10 @@ export default function NewInvoicePage({ products, onEmitInvoice, formatCurrency
               className="field-input"
               id="fac-nit"
               type="text"
-              placeholder="000.000.000-0"
+              inputMode="numeric"
+              placeholder="solo numeros"
               value={nit}
-              onChange={(event) => setNit(event.target.value)}
+              onChange={(event) => setNit(event.target.value.replace(/\D/g, ''))}         
             />
           </div>
           <div className="form-field" style={{ marginBottom: '.75rem' }}>

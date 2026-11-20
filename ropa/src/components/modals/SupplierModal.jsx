@@ -31,7 +31,14 @@ export default function SupplierModal({ open, onClose, onSave, supplier, existin
       setError('Complete todos los campos obligatorios.');
       return;
     }
-    if (!isEditing && existingNits.includes(form.nit.trim())) {
+        if (!/^\d+$/.test(form.nit.trim())) {
+      setError('El NIT debe contener solo números.');
+      return;
+    }
+    const otherNits = isEditing
+      ? existingNits.filter((nit) => nit !== supplier.nit)
+      : existingNits;
+    if (otherNits.includes(form.nit.trim())) {
       setError('Ya existe un proveedor con ese NIT.');
       return;
     }
@@ -62,10 +69,12 @@ export default function SupplierModal({ open, onClose, onSave, supplier, existin
                 className="field-input"
                 id="sp-nit"
                 type="text"
-                placeholder="Ej: 900123456-7"
+                inputMode="numeric"
+                placeholder="Ej: 900123456"
                 value={form.nit}
-                disabled={isEditing}
-                onChange={handleChange('nit')}
+                onChange={(event) =>
+                  setForm((prev) => ({ ...prev, nit: event.target.value.replace(/\D/g, '') }))
+                }
               />
             </div>
             <div className="form-field">

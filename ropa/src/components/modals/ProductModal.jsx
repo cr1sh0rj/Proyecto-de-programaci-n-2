@@ -46,7 +46,10 @@ export default function ProductModal({ open, onClose, onSave, product, existingC
       setError('Complete todos los campos obligatorios.');
       return;
     }
-    if (!isEditing && existingCodes.includes(form.code.trim())) {
+    const otherCodes = isEditing
+      ? existingCodes.filter((code) => code !== product.code)
+      : existingCodes;
+    if (otherCodes.includes(form.code.trim())) {
       setError('Ya existe un producto con ese código.');
       return;
     }
@@ -83,7 +86,6 @@ export default function ProductModal({ open, onClose, onSave, product, existingC
                 type="text"
                 placeholder="Ej: M-001"
                 value={form.code}
-                disabled={isEditing}
                 onChange={handleChange('code')}
               />
             </div>

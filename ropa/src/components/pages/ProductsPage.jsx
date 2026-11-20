@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import ProductModal from '../modals/ProductModal';
 import ConfirmModal from '../modals/ConfirmModal';
 
-export default function ProductsPage({ products, onAddProduct, onDeleteProduct, formatCurrency }) {
+export default function ProductsPage({ products, onAddProduct, onEditProduct, onDeleteProduct, formatCurrency }) {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
   const [showModal, setShowModal] = useState(false);

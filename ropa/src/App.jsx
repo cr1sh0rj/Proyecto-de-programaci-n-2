@@ -123,12 +123,19 @@ export default function App() {
   const handleAddProduct = (product) => {
     setProducts((prev) => [...prev, product]);
   };
-  const handleEditProduct = (code, updated) => {
-  setProducts((prev) =>
-    prev.map((product) =>
-      product.code === code ? { ...product, ...updated, code } : product,
-   ),
-   );
+  const handleEditProduct = (oldCode, updated) => {
+    setProducts((prev) =>
+      prev.map((product) =>
+        product.code === oldCode ? { ...product, ...updated } : product,
+      ),
+    );
+    setMovements((prev) =>
+      prev.map((movement) =>
+        movement.productCode === oldCode
+          ? { ...movement, productCode: updated.code, product: updated.name }
+          : movement,
+      ),
+    );
   };
   const handleDeleteProduct = (code) => {
     setProducts((prev) => prev.filter((product) => product.code !== code));
@@ -140,7 +147,7 @@ export default function App() {
   const handleEditSupplier = (nit, updated) => {
     setSuppliers((prev) =>
       prev.map((supplier) =>
-        supplier.nit === nit ? { ...supplier, ...updated, nit } : supplier,
+        supplier.nit === nit ? { ...supplier, ...updated } : supplier,
       ),
     );
   };
@@ -206,12 +213,12 @@ export default function App() {
 
   const handleDeleteInvoice = (id) => {
     setInvoices((prev) =>
-       prev.filter((invoice) => 
+       prev.map((invoice) => 
         invoice.id === id ? { ...invoice, status: 'Cancelada' } : invoice,
       ),
     );
   };
-  const handleEmitInvoice = ({ client, date, payment, lines }) => {
+  const handleEmitInvoice = ({ client,nit, date, payment, lines }) => {
     const issuedAt = parseLocalDate(date);
     const dueDate = issuedAt ? new Date(issuedAt) : null;
     if (dueDate) {
@@ -240,6 +247,10 @@ export default function App() {
         issuedAt: formatDateShort(issuedAt),
         dueAt: formatDateShort(dueDate),
         total,
+        nit,
+        issuedDate: date,
+        subtotal,
+        iva: ivaTotal,
         status,
       },
       ...prev,
