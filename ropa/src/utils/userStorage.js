@@ -1,3 +1,5 @@
+import seedUsers from '../data/usuarios.json';
+
 const STORAGE_KEY = 'ropa.registrations.v1';
 const VALID_ROLES = new Set(['inventario', 'facturacion']);
 
@@ -27,13 +29,16 @@ export function validateRegistration(data) {
   return '';
 }
 
-const readUsers = () => {
+const readStoredUsers = () => {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (!saved) return [];
   const users = JSON.parse(saved);
   if (!Array.isArray(users)) throw new Error('El registro local no tiene un formato válido.');
   return users;
 };
+
+// Cuentas del archivo usuarios.json + cuentas creadas desde el registro
+const readAllUsers = () => [...seedUsers, ...readStoredUsers()];
 
 const toHex = (buffer) => Array.from(new Uint8Array(buffer), (byte) => byte.toString(16).padStart(2, '0')).join('');
 const fromHex = (hex) => new Uint8Array(hex.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)));
@@ -60,19 +65,20 @@ export async function addRegisteredUser(data) {
   if (validationError) return { ok: false, error: validationError };
 
   try {
-    const users = readUsers();
+    const allUsers = readAllUsers();
     const username = normalize(data.username);
     const email = normalize(data.email);
-    if (users.some((user) => normalize(user.username) === username)) {
+    if (allUsers.some((user) => normalize(user.username) === username)) {
       return { ok: false, error: 'Ese nombre de usuario ya está registrado.' };
     }
-    if (users.some((user) => normalize(user.email) === email)) {
+    if (allUsers.some((user) => normalize(user.email) === email)) {
       return { ok: false, error: 'Ese correo electrónico ya está registrado.' };
     }
 
+    const storedUsers = readStoredUsers();
     const salt = toHex(crypto.getRandomValues(new Uint8Array(16)));
     const passwordHash = await makePasswordHash(data.password, salt);
-    users.push({
+    storedUsers.push({
       fullName: data.fullName.trim(),
       username: data.username.trim(),
       email: data.email.trim(),
@@ -80,7 +86,7 @@ export async function addRegisteredUser(data) {
       salt,
       passwordHash,
     });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(storedUsers));
     return { ok: true };
   } catch {
     return { ok: false, error: 'No se pudo guardar la cuenta en este navegador.' };
@@ -88,7 +94,7 @@ export async function addRegisteredUser(data) {
 }
 
 export async function findRegisteredUser(loginName) {
-  const user = readUsers().find((entry) => normalize(entry.username) === loginName);
+  const user = readAllUsers().find((entry) => normalize(entry.username) === loginName);
   if (!user) return null;
   return {
     fullName: user.fullName,

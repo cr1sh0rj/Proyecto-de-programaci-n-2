@@ -1,7 +1,34 @@
 [
-    {
-        "usuario": "inventario",
-        "contraseña" : "$2a$10$OJnrt4QSR82YJfs0zC3p5OjVU8p07LfG6UOtOsWGfcTcD1JIjVd5u",
-        "rol":"inventario"
-    }
+  {
+    "fullName": "Jefe de Inventario",
+    "username": "jefe.inventario",
+    "email": "jefe.inventario@kabod.com",
+    "role": "inventario",
+    "salt": "1a1ffdf0e78f1ef718311d3f0fd4c5f0",
+    "passwordHash": "ae034bca91c2494c7ba78948c53f06667c3a59bdb9fc09dafcf744f1c615ea0e"
+  },
+  {
+    "fullName": "Auxiliar de Inventario",
+    "username": "aux.inventario",
+    "email": "aux.inventario@kabod.com",
+    "role": "inventario",
+    "salt": "6c28640598ed5b987e6ede8e0be431f8",
+    "passwordHash": "a6af98bcb34040ab8469a64719534ac723cf02892da27427e2ae8cc822739469"
+  },
+  {
+    "fullName": "Jefe de Facturación",
+    "username": "jefe.facturacion",
+    "email": "jefe.facturacion@kabod.com",
+    "role": "facturacion",
+    "salt": "ff0606e179fce5e071510b80c81aa863",
+    "passwordHash": "60cf958e4c4378408a88a06b23616142009422c80200ed12d5d9d5b7d42ee1e3"
+  },
+  {
+    "fullName": "Auxiliar de Facturación",
+    "username": "aux.facturacion",
+    "email": "aux.facturacion@kabod.com",
+    "role": "facturacion",
+    "salt": "0cdb86ee284ce49e548e66475ec53948",
+    "passwordHash": "deb734676ebddaa2f9555f6fdb11513e62282e31ef151f8e62d51ceadf72783b"
+  }
 ]

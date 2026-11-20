@@ -161,7 +161,7 @@ export default function MainLayout({
             </PageContainer>
 
             <PageContainer id="clientes" active={activePage === 'clientes'}>
-              <ClientsPage />
+              <ClientsPage invoices={invoices} formatCurrency={formatCurrency} />
             </PageContainer>
 
             <PageContainer id="ventas-rep" active={activePage === 'ventas-rep'}>

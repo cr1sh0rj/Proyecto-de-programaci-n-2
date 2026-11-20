@@ -9,14 +9,6 @@ import usePersistentState from './utils/usePersistentState';
 import {formatCurrency,formatDate,formatDateShort,parseLocalDate,} from './utils/formatters';
 import { addRegisteredUser, findRegisteredUser } from './utils/userStorage';
 
-const LOGIN_PASSWORDS = {
-  inventario: 'inv123',
-  facturacion: 'fac123',
-};
-
-const getDefaultUser = (role) =>
-  role === 'inventario' ? 'Jefe de Inventario' : 'Facturador';
-
 const INITIAL_PRODUCTS = datosIniciales.productos.map((p) => ({
   code: p.codigo,
   name: p.nombre,
@@ -68,44 +60,40 @@ export default function App() {
   };
 
   const handleLogin = async ({ user, pass }) => {
-    if (!pass) {
-      setLoginError('Por favor ingrese su clave de acceso.');
+    const normalizedUser = user?.trim().toLocaleLowerCase();
+    if (!normalizedUser || !pass) {
+      setLoginError('Ingrese su usuario y su clave de acceso.');
       return;
     }
 
-    const normalizedUser = user?.trim().toLocaleLowerCase();
     let registeredUser;
     try {
-      registeredUser = normalizedUser ? await findRegisteredUser(normalizedUser) : null;
+      registeredUser = await findRegisteredUser(normalizedUser);
     } catch {
       setLoginError('No se pudieron leer las cuentas guardadas en este navegador.');
       return;
     }
 
-    if (registeredUser) {
-      let passwordMatches;
-      try {
-        passwordMatches = await registeredUser.verifyPassword(pass);
-      } catch {
-        setLoginError('No se pudo verificar la cuenta guardada.');
-        return;
-      }
-      if (!passwordMatches) {
-        setLoginError('Usuario o contraseña incorrectos.');
-        return;
-      }
-      setRole(registeredUser.role);
-      setUserName(registeredUser.fullName);
-      setActivePage(registeredUser.role === 'inventario' ? 'dashboard-inv' : 'dashboard-fac');
-    } else if (pass !== LOGIN_PASSWORDS[role]) {
-      setLoginError('Clave incorrecta. Verifique e intente de nuevo.');
+    if (!registeredUser) {
+      setLoginError('Usuario o contraseña incorrectos.');
       return;
-    } else {
-      const name = user?.trim() || getDefaultUser(role);
-      setUserName(name);
-      setActivePage(role === 'inventario' ? 'dashboard-inv' : 'dashboard-fac');
     }
 
+    let passwordMatches;
+    try {
+      passwordMatches = await registeredUser.verifyPassword(pass);
+    } catch {
+      setLoginError('No se pudo verificar la cuenta guardada.');
+      return;
+    }
+    if (!passwordMatches) {
+      setLoginError('Usuario o contraseña incorrectos.');
+      return;
+    }
+
+    setRole(registeredUser.role);
+    setUserName(registeredUser.fullName);
+    setActivePage(registeredUser.role === 'inventario' ? 'dashboard-inv' : 'dashboard-fac');
     setLoginError('');
     setRegistrationMessage('');
     setScreen('main');
